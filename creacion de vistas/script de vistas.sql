@@ -16,10 +16,19 @@ CREATE OR REPLACE VIEW vw_paises_america AS
 	ON t.region_id = r.region_id
 	WHERE r.region_name = "America";
  
-CREATE OR REPLACE VIEW vw_argentina_matches AS    
-	SELECT m.match_id, m.match_date, m.match_round, m.id_player1 AS player1, m.res_player1, m.id_player2 AS player2, m.res_player2
+SELECT m.match_id, m.match_date, m.match_round, m.id_player1, m.res_player1, m.id_player2, m.res_player2
 	FROM matches AS m
-    WHERE m.id_player1 = 1 OR m.id_player2 = 1;
+	INNER JOIN teams AS t
+	ON m.id_player1 = t.team_id; 
+ 
+CREATE OR REPLACE VIEW vw_matches_argentina AS    
+	SELECT m.match_id, m.match_date, m.match_round, t.team_name AS player1, m.res_player1, t2.team_name AS player2, m.res_player2
+	FROM matches AS m
+	INNER JOIN teams AS t
+	ON m.id_player1 = t.team_id
+    INNER JOIN teams AS t2
+    ON m.id_player2 = t2.team_id
+    WHERE t.team_name = "Argentina" OR t2.team_name = "Argentina";
     
 CREATE OR REPLACE VIEW vw_primeros_cuatro AS
 	SELECT stats_id, team_name, far_instance FROM stats WHERE matches_quantity = 7;
@@ -27,5 +36,5 @@ CREATE OR REPLACE VIEW vw_primeros_cuatro AS
 SELECT * FROM vw_argentina; 
 SELECT * FROM vw_regiones;
 SELECT * FROM vw_paises_america;
-SELECT * FROM vw_argentina_matches;
+SELECT * FROM vw_matches_argentina;
 SELECT * FROM vw_primeros_cuatro;
